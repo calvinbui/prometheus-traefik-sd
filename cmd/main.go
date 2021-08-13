@@ -56,7 +56,8 @@ func main() {
 			var t []string
 			for _, m := range match {
 				logger.Debug(fmt.Sprintf("Found host: %s", m[0]))
-				t = append(t, m[0])
+				// assume https://
+				t = append(t, "https://"+m[0])
 			}
 
 			logger.Debug(fmt.Sprintf("Processed all targets on rule and found: %+v", t))
@@ -80,7 +81,7 @@ func main() {
 
 		logger.Info("Creating Prometheus target file")
 		logger.Debug("Marshalling JSON")
-		file, err := json.MarshalIndent(tg, "", "")
+		file, err := json.MarshalIndent(tg, "", "  ")
 		if err != nil {
 			logger.Fatal("", err)
 		}
