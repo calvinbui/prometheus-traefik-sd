@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/calvinbui/blackbox-traefik-sd/internal"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/config"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/traefik"
@@ -38,9 +39,14 @@ func main() {
 			logger.Fatal("Error getting Traefik routes", err)
 		}
 
-		targets := traefik.GetHostsFromRouter(routes)
-
+		targets := internal.GetTargetsFromRules(routes)
 		logger.Debug(fmt.Sprintf("Targets: %+v", targets))
+
+		logger.Info("Creating Prometheus target file")
+		err = internal.BuildPrometheusTargetFile(targets, conf.TargetsFile)
+		if err != nil {
+			logger.Fatal("Error building target file", err)
+		}
 
 		logger.Info("Sleeping until next run")
 		time.Sleep(time.Duration(conf.RunInterval) * time.Second)

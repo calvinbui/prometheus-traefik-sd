@@ -11,7 +11,12 @@ services:
       TRAEFIK_URL: http://traefik.mgmt
       TRAEFIK_USERNAME: calvin
       TRAEFIK_PASSWORD: ${TRAEFIK_PASSWORD}
+
       LOG_LEVEL: debug
+
+      INTERVAL: 30
+
+      TARGETS_FILE: /apps/prometheus/blackbox-traefik-sd/targets.json
     networks:
       - mgmt
 
