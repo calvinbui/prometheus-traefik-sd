@@ -19,6 +19,10 @@ services:
       TARGETS_FILE: /apps/prometheus/blackbox-traefik-sd/targets.json
     networks:
       - mgmt
+    volumes:
+      - type: bind
+        source: /apps/prometheus/blackbox-traefik-sd
+        target: /apps/prometheus/blackbox-traefik-sd
 
 networks:
   mgmt:
