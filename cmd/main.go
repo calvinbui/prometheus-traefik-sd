@@ -43,6 +43,6 @@ func main() {
 		logger.Debug(fmt.Sprintf("Targets: %+v", targets))
 
 		logger.Info("Sleeping until next run")
-		time.Sleep(60 * time.Second)
+		time.Sleep(time.Duration(conf.RunInterval) * time.Second)
 	}
 }

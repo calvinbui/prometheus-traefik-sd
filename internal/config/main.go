@@ -12,6 +12,8 @@ type Config struct {
 	TraefikPassword string `env:"TRAEFIK_PASSWORD"`
 
 	LogLevel string `env:"LOG_LEVEL" envDefault:"Info"`
+
+	RunInterval int `env:"INTERVAL" envDefault:"60"`
 }
 
 func New() (Config, error) {
