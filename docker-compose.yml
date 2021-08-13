@@ -1,0 +1,13 @@
+---
+
+version: "3.9"
+
+services:
+  btsd:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      TRAEFIK_HOST: traefik.mgmt
+      TRAEFIK_USERNAME: calvin
+      TRAEFIK_PASSWORD: ${TRAEFIK_PASSWORD}
