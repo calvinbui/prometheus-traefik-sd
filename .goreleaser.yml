@@ -8,7 +8,8 @@ release:
     name: blackbox-traefik-sd
 
 builds:
-  - main: ./cmd/main.go
+  - id: aix
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -17,7 +18,8 @@ builds:
     goarch:
       - ppc64
 
-  - main: ./cmd/main.go
+  - id: darwin
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -27,7 +29,8 @@ builds:
       - amd64
       - arm64
 
-  - main: ./cmd/main.go
+  - id: dragonfly_illumos
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -37,7 +40,8 @@ builds:
     goarch:
       - amd64
 
-  - main: ./cmd/main.go
+  - id: freebsd
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -51,21 +55,8 @@ builds:
       - 6
       - 7
 
-  - main: ./cmd/main.go
-    binary: main
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 6
-      - 7
-
-  - main: ./cmd/main.go
+  - id: linux
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -88,7 +79,8 @@ builds:
       - 6
       - 7
 
-  - main: ./cmd/main.go
+  - id: netbsd
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -103,7 +95,8 @@ builds:
       - 6
       - 7
 
-  - main: ./cmd/main.go
+  - id: openbsd
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
@@ -117,7 +110,8 @@ builds:
     goarm:
       - 7
 
-  - main: ./cmd/main.go
+  - id: windows
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
