@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"path"
 	"regexp"
 
@@ -30,30 +31,37 @@ type Router struct {
 }
 
 func (c Client) GetRoutes() ([]Router, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", path.Join(c.Url, "/api/http/routers"), nil)
+	// build the URL
+	traefikURL, err := url.Parse(c.Url)
 	if err != nil {
 		return []Router{}, err
 	}
+	traefikURL.Path = path.Join(traefikURL.Path, "/api/http/routers")
 
+	// build the request
+	req, err := http.NewRequest("GET", traefikURL.String(), nil)
+	if err != nil {
+		return []Router{}, err
+	}
 	if c.Username != "" && c.Password != "" {
 		req.SetBasicAuth(c.Username, c.Password)
 	}
 
+	// do the request and check for errors
+	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
 		return []Router{}, err
 	}
-
 	if res.StatusCode != 200 {
 		return []Router{}, fmt.Errorf("Traefik returned non-success code: %v", res.StatusCode)
 	}
 
+	// parse the JSON
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return []Router{}, err
 	}
-
 	var routers []Router
 	err = json.Unmarshal(data, &routers)
 	if err != nil {
