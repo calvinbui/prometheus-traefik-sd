@@ -8,6 +8,6 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      TRAEFIK_HOST: traefik.mgmt
+      TRAEFIK_HOST: http://traefik.mgmt
       TRAEFIK_USERNAME: calvin
       TRAEFIK_PASSWORD: ${TRAEFIK_PASSWORD}
