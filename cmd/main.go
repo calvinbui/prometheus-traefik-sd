@@ -52,6 +52,9 @@ func main() {
 			logger.Debug(fmt.Sprintf("Working on rule: %s", r))
 			// get all hosts for the route
 			match := re.FindAllStringSubmatch(r, -1)
+			if len(match) == 0 {
+				continue
+			}
 
 			var t []string
 			for _, m := range match {
@@ -92,7 +95,7 @@ func main() {
 			logger.Fatal("", err)
 		}
 
-		logger.Info("Sleeping until next run")
+		logger.Info(fmt.Sprintf("Sleeping %v seconds until next run", conf.RunInterval))
 		time.Sleep(time.Duration(conf.RunInterval) * time.Second)
 	}
 }
