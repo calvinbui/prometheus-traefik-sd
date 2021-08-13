@@ -1,12 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"regexp"
 	"time"
 
-	"github.com/calvinbui/blackbox-traefik-sd/internal"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/config"
+	"github.com/calvinbui/blackbox-traefik-sd/internal/helpers"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
+	"github.com/calvinbui/blackbox-traefik-sd/internal/prometheus"
 	"github.com/calvinbui/blackbox-traefik-sd/internal/traefik"
 )
 
@@ -32,20 +36,59 @@ func main() {
 		Password: conf.TraefikPassword,
 	}
 
+	logger.Debug("Building Traefik rules regex")
+	var re = regexp.MustCompile(`(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]`)
+
 	for {
-		logger.Info("Getting Traefik routes")
-		routes, err := cTraefik.GetRoutes()
+		logger.Info("Getting Traefik routing rules")
+		rules, err := cTraefik.GetRules()
 		if err != nil {
 			logger.Fatal("Error getting Traefik routes", err)
 		}
+		logger.Debug(fmt.Sprintf("Rules: %+v", rules))
 
-		targets := internal.GetTargetsFromRules(routes)
+		targets := [][]string{}
+		for _, r := range rules {
+			logger.Debug(fmt.Sprintf("Working on rule: %s", r))
+			// get all hosts for the route
+			match := re.FindAllStringSubmatch(r, -1)
+
+			var t []string
+			for _, m := range match {
+				logger.Debug(fmt.Sprintf("Found host: %s", m[0]))
+				t = append(t, m[0])
+			}
+
+			logger.Debug(fmt.Sprintf("Processed all targets on rule and found: %+v", t))
+			targets = append(targets, t)
+		}
 		logger.Debug(fmt.Sprintf("Targets: %+v", targets))
 
-		logger.Info("Creating Prometheus target file")
-		err = internal.BuildPrometheusTargetFile(targets, conf.TargetsFile)
+		logger.Debug("Generating Prometheus data")
+		tg := []prometheus.TargetGroup{}
+		for _, t := range targets {
+			tg = append(tg, prometheus.TargetGroup{
+				Targets: t,
+			})
+		}
+
+		logger.Debug("Creating config folder if it does not exist")
+		err = helpers.InitFolder(conf.TargetsFile)
 		if err != nil {
-			logger.Fatal("Error building target file", err)
+			logger.Fatal("", err)
+		}
+
+		logger.Info("Creating Prometheus target file")
+		logger.Debug("Marshalling JSON")
+		file, err := json.MarshalIndent(tg, "", "")
+		if err != nil {
+			logger.Fatal("", err)
+		}
+
+		logger.Debug("Write JSON to file")
+		err = ioutil.WriteFile(conf.TargetsFile, file, 0755)
+		if err != nil {
+			logger.Fatal("", err)
 		}
 
 		logger.Info("Sleeping until next run")

@@ -9,7 +9,7 @@ import (
 	"path"
 )
 
-func (c Client) GetRoutes() ([]string, error) {
+func (c Client) GetRules() ([]string, error) {
 	// build the URL
 	traefikURL, err := url.Parse(c.Url)
 	if err != nil {
