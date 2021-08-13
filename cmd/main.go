@@ -21,7 +21,7 @@ func main() {
 	logger.Info("Setting log level to " + conf.LogLevel)
 	err = logger.SetLevel(conf.LogLevel)
 	if err != nil {
-		logger.Fatal("Error setting log level: %w", err)
+		logger.Fatal("Error setting log level", err)
 	}
 
 	logger.Debug("Creating Traefik client")
@@ -35,7 +35,7 @@ func main() {
 		logger.Info("Getting Traefik routes")
 		routes, err := cTraefik.GetRoutes()
 		if err != nil {
-			logger.Fatal("Error getting Traefik routes: %w", err)
+			logger.Fatal("Error getting Traefik routes", err)
 		}
 
 		targets := traefik.GetHostsFromRouter(routes)
