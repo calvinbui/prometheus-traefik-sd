@@ -1,0 +1,91 @@
+---
+
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Get Go version
+        run: echo go_version="$(cat Dockerfile | grep 'FROM golang:' | grep -o -P '(?<=golang:).*(?=-alpine)')" >> $GITHUB_ENV
+
+      - name: 🥽 Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "${{ env.go_version }}"
+
+      - name: 🔌 Get cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: 🦺 Go Build
+        run: go build -v ./...
+
+      - name: ⛑️ Go Test
+        run: go test -v ./...
+
+  golangci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Get Go version
+        run: echo go_version="$(cat Dockerfile | grep 'FROM golang:' | grep -o -P '(?<=golang:).*(?=-alpine)')" >> $GITHUB_ENV
+
+      - name: 🥽 Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "${{ env.go_version }}"
+
+      - name: 📢 golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          skip-go-installation: true
+
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Get Go version
+        run: echo go_version="$(cat Dockerfile | grep 'FROM golang:' | grep -o -P '(?<=golang:).*(?=-alpine)')" >> $GITHUB_ENV
+
+      - name: 🥽 Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "${{ env.go_version }}"
+
+      - name: 📜 Check
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📐 Build Only
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

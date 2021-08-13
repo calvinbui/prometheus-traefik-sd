@@ -1,0 +1,140 @@
+---
+
+project_name: blackbox-traefik-sd
+
+release:
+  github:
+    owner: calvinbui
+    name: blackbox-traefik-sd
+
+builds:
+  - main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - "aix"
+      - "darwin"
+      - "dragonfly"
+      - "freebsd"
+      - "illumos"
+      - "linux"
+      - "netbsd"
+      - "openbsd"
+      - "windows"
+    goarch:
+      - "ppc64"
+      - "amd64"
+      - "386"
+      - "arm"
+      - "arm64"
+      - "mips"
+      - "mips64"
+      - "mips64le"
+      - "mipsle"
+      - "ppc64le"
+      - "s390x"
+    goarm:
+      - 5
+      - 6
+      - 7
+
+dockers:
+  - goos: linux
+    goarch: amd64
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-amd64"
+
+  - goos: linux
+    goarch: arm64
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm64v8"
+
+  - goos: linux
+    goarch: arm
+    goarm: 7
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/arm"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm32v7"
+
+  - goos: linux
+    goarch: ppc64le
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/ppc64le"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-ppc64le"
+
+docker_manifests:
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:latest"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-ppc64le"
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
