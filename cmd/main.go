@@ -40,7 +40,7 @@ func main() {
 
 		targets := traefik.GetHostsFromRouter(routes)
 
-		fmt.Printf("%v", targets)
+		logger.Debug(fmt.Sprintf("Targets: %+v", targets))
 
 		logger.Info("Sleeping until next run")
 		time.Sleep(60 * time.Second)
