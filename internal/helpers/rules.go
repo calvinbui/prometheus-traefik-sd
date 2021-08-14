@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"regexp"
+	"sort"
 
 	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
 )
@@ -21,6 +22,9 @@ func GetHostsFromRules(rules []string) [][]string {
 				// assume https://
 				t = append(t, "https://"+m[0])
 			}
+
+			logger.Debug("Sorting targets in alphabetical order")
+			sort.Strings(t)
 
 			logger.Debug(fmt.Sprintf("Processed all targets on rule and found: %+v", t))
 			hosts = append(hosts, t)

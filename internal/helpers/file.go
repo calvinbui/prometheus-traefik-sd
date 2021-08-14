@@ -18,15 +18,3 @@ func InitFolder(filePath string) error {
 
 	return nil
 }
-
-func InitConfig(filePath string) error {
-	_, err := os.Stat(filePath)
-	if os.IsNotExist(err) {
-		_, err := os.Create(filePath)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}

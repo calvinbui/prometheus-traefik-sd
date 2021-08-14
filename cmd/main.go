@@ -38,18 +38,22 @@ func main() {
 		logger.Debug(fmt.Sprintf("All hosts: %+v", hosts))
 
 		logger.Info("Generating Prometheus data")
-		tg := []prometheus.TargetGroup{}
+		allTargets := []prometheus.TargetGroups{}
 		for _, t := range hosts {
-			tg = append(tg, prometheus.TargetGroup{Targets: t})
+			allTargets = append(allTargets, prometheus.TargetGroups{
+				prometheus.TargetGroup{
+					Targets: t,
+				},
+			})
 		}
 
 		logger.Debug("Creating config folder if it does not exist")
-		if err = helpers.InitFolder(conf.TargetsFile); err != nil {
+		if err = helpers.InitFolder(conf.OutputDir); err != nil {
 			logger.Fatal("Error creating config folder", err)
 		}
 
 		logger.Info("Creating Prometheus JSON target file")
-		if err = helpers.CreateTargetsJSON(tg, conf.TargetsFile); err != nil {
+		if err = helpers.CreateJSON(allTargets, conf.OutputDir); err != nil {
 			logger.Fatal("Error writing to JSON file", err)
 		}
 

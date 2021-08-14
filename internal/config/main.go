@@ -16,7 +16,7 @@ type Config struct {
 	// set twice as long as any blackbox alerts
 	RunInterval int `env:"INTERVAL" envDefault:"600"`
 
-	TargetsFile string `env:"TARGETS_FILE" envDefault:"/blackbox-traefik-sd/targets.json"`
+	OutputDir string `env:"OUTPUT_DIR" envDefault:"/blackbox-traefik-sd/"`
 }
 
 func New() (Config, error) {

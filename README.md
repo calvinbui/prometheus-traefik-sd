@@ -4,14 +4,14 @@ Generate targets for Blackbox Exporter using Traefik.
 
 ## Config
 
-| Environment Variable | Description                                        | Default                             |
-|----------------------|----------------------------------------------------|-------------------------------------|
-| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                                  |
-| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                                  |
-| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                                  |
-| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                              |
-| `TARGETS_FILE`       | The file to output                                 | `/blackbox-traefik-sd/targets.json` |
-| `INTERVAL`           | How often to build the targets file                | `600`                               |
+| Environment Variable | Description                                        | Default                 |
+|----------------------|----------------------------------------------------|-------------------------|
+| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                      |
+| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                      |
+| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                      |
+| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                  |
+| `OUTPUT_DIR`         | The folder to output all target JSON files         | `/blackbox-traefik-sd/` |
+| `INTERVAL`           | How often to build the targets file                | `600`                   |
 
 ## Usage
 
@@ -24,11 +24,11 @@ $ docker run -d \
   -e TRAEFIK_URL=https://traefik.example.com \
   -e INTERVAL=600 \
   -v /apps/blackbox-traefik-sd:/config \
-  -e TARGETS_FILE=/config/targets.json \
+  -e OUTPUT_DIR=/config/targets.json \
   ghcr.io/calvinbui/homer-service-discovery
 ```
 
-The application will generate a JSON file to the path specified in the environment variable `TARGETS_FILE`.
+The application will generate JSON files to the path specified in the environment variable `OUTPUT_DIR`.
 
 Update your Prometheus config to use the generated targets file along with Blackbox Exporter:
 
@@ -40,7 +40,7 @@ scrape_configs:
       module: [http]
     file_sd_configs:
       - files:
-        - /blackbox-traefik-sd/targets.json
+        - /blackbox-traefik-sd/*.json
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -52,13 +52,14 @@ scrape_configs:
 
 ## Caveats
 
-If a route is removed from Traefik (i.e. a Docker container is removed), this application will also remove it from being monitored. Therefore it is recommended to set the `INTERVAL` environment variable to twice the amount of time it'll take before your rules/alerts trigger.
+If a route is removed from Traefik (i.e. a Docker container is removed), you will have to delete the target JSON file manually from Prometheus under the `OUTPUT_DIR`.
 
 ## To Do
 
 - Support config Labels for Prometheus
 - Integrate with Docker labels to configure labels and scheme (currently on https://)
 - Integrate with Traefik Services to get more information
+- Delete any unknown targets after a period of time
 
 ## Thanks
 
