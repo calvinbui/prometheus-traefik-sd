@@ -32,5 +32,5 @@ func createFileName(folder string, targets []string) string {
 		targets[i] = strings.TrimPrefix(targets[i], SCHEME)
 	}
 
-	return path.Join(folder, strings.Join(targets, "_"))
+	return path.Join(folder, strings.Join(targets, "_")+".json")
 }
