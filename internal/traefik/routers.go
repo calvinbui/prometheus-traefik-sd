@@ -9,9 +9,9 @@ import (
 	"path"
 )
 
-func (c Client) GetRules() ([]string, error) {
+func GetRoutingRules(traefikUrl, traefikUsername, traefikPassword string) ([]string, error) {
 	// build the URL
-	traefikURL, err := url.Parse(c.Url)
+	traefikURL, err := url.Parse(traefikUrl)
 	if err != nil {
 		return []string{}, err
 	}
@@ -22,8 +22,8 @@ func (c Client) GetRules() ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	if c.Username != "" && c.Password != "" {
-		req.SetBasicAuth(c.Username, c.Password)
+	if traefikUsername != "" && traefikPassword != "" {
+		req.SetBasicAuth(traefikUsername, traefikPassword)
 	}
 
 	// do the request and check for errors

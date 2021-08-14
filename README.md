@@ -4,14 +4,14 @@ Generate targets for Blackbox Exporter using Traefik.
 
 ## Config
 
-| Environment Variable | Description                                        |
-|----------------------|----------------------------------------------------|
-| TRAEFIK_URL          | Traefik API url (with scheme, http:// or https://) |
-| TRAEFIK_USERNAME     | Traefik API basic auth username (if required)      |
-| TRAEFIK_PASSWORD     | Traefik API basic auth password (if required)      |
-| LOG_LEVEL            | The level of log verbosity                         |
-| TARGETS_FILE         | The file to output                                 |
-| INTERVAL             | How often to build the targets file                |
+| Environment Variable | Description                                        | Default                             |
+|----------------------|----------------------------------------------------|-------------------------------------|
+| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                                  |
+| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                                  |
+| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                                  |
+| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                              |
+| `TARGETS_FILE`       | The file to output                                 | `/blackbox-traefik-sd/targets.json` |
+| `INTERVAL`           | How often to build the targets file                | `600`                               |
 
 ## Usage
 

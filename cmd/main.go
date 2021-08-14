@@ -17,23 +17,15 @@ import (
 func main() {
 	logger.Init()
 
-	logger.Debug("Loading internal config")
+	logger.Debug("Loading config")
 	conf, err := config.New()
 	if err != nil {
 		logger.Fatal("Error parsing config", err)
 	}
 
 	logger.Info("Setting log level to " + conf.LogLevel)
-	err = logger.SetLevel(conf.LogLevel)
-	if err != nil {
+	if err = logger.SetLevel(conf.LogLevel); err != nil {
 		logger.Fatal("Error setting log level", err)
-	}
-
-	logger.Debug("Creating Traefik client")
-	cTraefik := traefik.Client{
-		Url:      conf.TraefikUrl,
-		Username: conf.TraefikUsername,
-		Password: conf.TraefikPassword,
 	}
 
 	logger.Debug("Building Traefik rules regex")
@@ -41,58 +33,51 @@ func main() {
 
 	for {
 		logger.Info("Getting Traefik routing rules")
-		rules, err := cTraefik.GetRules()
+		rules, err := traefik.GetRoutingRules(conf.TraefikUrl, conf.TraefikUsername, conf.TraefikPassword)
 		if err != nil {
-			logger.Fatal("Error getting Traefik routes", err)
+			logger.Fatal("Error getting Traefik routing rules", err)
 		}
 		logger.Debug(fmt.Sprintf("Rules: %+v", rules))
 
-		targets := [][]string{}
+		logger.Info("Getting hosts from rules")
+		hosts := [][]string{}
 		for _, r := range rules {
-			logger.Debug(fmt.Sprintf("Working on rule: %s", r))
-			// get all hosts for the route
-			match := re.FindAllStringSubmatch(r, -1)
-			if len(match) == 0 {
-				continue
-			}
+			logger.Debug("Finding hosts in the rule:" + r)
+			if match := re.FindAllStringSubmatch(r, -1); len(match) > 0 {
+				var t []string
+				for _, m := range match {
+					logger.Debug(fmt.Sprintf("Found host: %s", m[0]))
+					// assume https://
+					t = append(t, "https://"+m[0])
+				}
 
-			var t []string
-			for _, m := range match {
-				logger.Debug(fmt.Sprintf("Found host: %s", m[0]))
-				// assume https://
-				t = append(t, "https://"+m[0])
+				logger.Debug(fmt.Sprintf("Processed all targets on rule and found: %+v", t))
+				hosts = append(hosts, t)
 			}
-
-			logger.Debug(fmt.Sprintf("Processed all targets on rule and found: %+v", t))
-			targets = append(targets, t)
 		}
-		logger.Debug(fmt.Sprintf("Targets: %+v", targets))
+		logger.Debug(fmt.Sprintf("All hosts: %+v", hosts))
 
-		logger.Debug("Generating Prometheus data")
+		logger.Info("Generating Prometheus data")
 		tg := []prometheus.TargetGroup{}
-		for _, t := range targets {
-			tg = append(tg, prometheus.TargetGroup{
-				Targets: t,
-			})
+		for _, t := range hosts {
+			tg = append(tg, prometheus.TargetGroup{Targets: t})
 		}
 
 		logger.Debug("Creating config folder if it does not exist")
 		err = helpers.InitFolder(conf.TargetsFile)
 		if err != nil {
-			logger.Fatal("", err)
+			logger.Fatal("Error creating config folder", err)
 		}
 
 		logger.Info("Creating Prometheus target file")
 		logger.Debug("Marshalling JSON")
-		file, err := json.MarshalIndent(tg, "", "  ")
-		if err != nil {
-			logger.Fatal("", err)
-		}
-
-		logger.Debug("Write JSON to file")
-		err = ioutil.WriteFile(conf.TargetsFile, file, 0755)
-		if err != nil {
-			logger.Fatal("", err)
+		if file, err := json.MarshalIndent(tg, "", "  "); err != nil {
+			logger.Fatal("Error creating JSON data for Prometheus", err)
+		} else {
+			logger.Debug("Write JSON to file")
+			if err = ioutil.WriteFile(conf.TargetsFile, file, 0755); err != nil {
+				logger.Fatal("Error writing to JSON file", err)
+			}
 		}
 
 		logger.Info(fmt.Sprintf("Sleeping %v seconds until next run", conf.RunInterval))

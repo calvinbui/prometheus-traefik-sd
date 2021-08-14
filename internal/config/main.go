@@ -14,7 +14,7 @@ type Config struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"Info"`
 
 	// set twice as long as any blackbox alerts
-	RunInterval int `env:"INTERVAL" envDefault:"60"`
+	RunInterval int `env:"INTERVAL" envDefault:"600"`
 
 	TargetsFile string `env:"TARGETS_FILE" envDefault:"/blackbox-traefik-sd/targets.json"`
 }
