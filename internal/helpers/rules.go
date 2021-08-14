@@ -27,7 +27,5 @@ func GetHostsFromRules(rules []string) [][]string {
 		}
 	}
 
-	logger.Debug(fmt.Sprintf("All hosts: %+v", hosts))
-
 	return hosts
 }

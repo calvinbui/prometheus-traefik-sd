@@ -35,6 +35,7 @@ func main() {
 
 		logger.Info("Getting hosts from rules")
 		hosts := helpers.GetHostsFromRules(rules)
+		logger.Debug(fmt.Sprintf("All hosts: %+v", hosts))
 
 		logger.Info("Generating Prometheus data")
 		tg := []prometheus.TargetGroup{}
@@ -43,12 +44,11 @@ func main() {
 		}
 
 		logger.Debug("Creating config folder if it does not exist")
-		err = helpers.InitFolder(conf.TargetsFile)
-		if err != nil {
+		if err = helpers.InitFolder(conf.TargetsFile); err != nil {
 			logger.Fatal("Error creating config folder", err)
 		}
 
-		logger.Info("Creating Prometheus target file")
+		logger.Info("Creating Prometheus JSON target file")
 		if err = helpers.CreateTargetsJSON(tg, conf.TargetsFile); err != nil {
 			logger.Fatal("Error writing to JSON file", err)
 		}
