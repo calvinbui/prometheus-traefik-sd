@@ -1,6 +1,6 @@
 # Blackbox Traefik SD
 
-Get hosts being proxied by Traefik and generate a Prometheus Target for Blackbox Exporter.
+Generate targets for Blackbox Exporter using Traefik.
 
 ## Config
 
@@ -52,13 +52,13 @@ scrape_configs:
 
 ## Caveats
 
-If a route is removed from Traefik (i.e. a Docker container is removed), this application will also remove it from being monitored. Therefore it is recommended to set the `INTERVAL` environment variable to twice the amount of time it'll take before your Prometheus rules/alerts trigger
+If a route is removed from Traefik (i.e. a Docker container is removed), this application will also remove it from being monitored. Therefore it is recommended to set the `INTERVAL` environment variable to twice the amount of time it'll take before your rules/alerts trigger.
 
 ## To Do
 
-- Support config Labels
-- Integrate with Docker labels
-- Integrate with Traefik Services
+- Support config Labels for Prometheus
+- Integrate with Docker labels to configure labels and scheme (currently on https://)
+- Integrate with Traefik Services to get more information
 
 ## Thanks
 
