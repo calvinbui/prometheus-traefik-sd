@@ -8,6 +8,8 @@ import (
 	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
 )
 
+const SCHEME = "https://"
+
 var re = regexp.MustCompile(`(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]`)
 
 func GetHostsFromRules(rules []string) [][]string {
@@ -20,7 +22,7 @@ func GetHostsFromRules(rules []string) [][]string {
 			for _, m := range match {
 				logger.Debug(fmt.Sprintf("Found host: %s", m[0]))
 				// assume https://
-				t = append(t, "https://"+m[0])
+				t = append(t, SCHEME+m[0])
 			}
 
 			logger.Debug("Sorting targets in alphabetical order")

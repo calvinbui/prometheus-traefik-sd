@@ -28,5 +28,9 @@ func CreateJSON(tgs []prometheus.TargetGroups, folder string) error {
 }
 
 func createFileName(folder string, targets []string) string {
+	for i := range targets {
+		targets[i] = strings.TrimPrefix(targets[i], SCHEME)
+	}
+
 	return path.Join(folder, strings.Join(targets, "_"))
 }
