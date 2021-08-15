@@ -50,11 +50,9 @@ func main() {
 		for _, t := range hosts {
 			allTargets = append(allTargets, helpers.PromTargetFile{
 				FilePath: helpers.CreateFileName(conf.OutputDir, t),
-				Data: []prometheus.TargetGroups{
+				Data: prometheus.TargetGroups{
 					{
-						prometheus.TargetGroup{
-							Targets: t,
-						},
+						Targets: t,
 					},
 				},
 			})
