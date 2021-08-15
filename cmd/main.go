@@ -27,9 +27,15 @@ func main() {
 
 	for {
 		logger.Info("Getting Traefik routing rules")
-		rules, err := traefik.GetRoutingRules(conf.TraefikUrl, conf.TraefikUsername, conf.TraefikPassword)
+		logger.Debug("Getting Traefik routes")
+		routes, err := traefik.GetRoutingRules(conf.TraefikUrl, conf.TraefikUsername, conf.TraefikPassword)
 		if err != nil {
 			logger.Fatal("Error getting Traefik routing rules", err)
+		}
+		logger.Debug("Getting Traefik rules from the routes")
+		rules, err := helpers.GetRouteRules(routes)
+		if err != nil {
+			logger.Fatal("Error parsing Traefik routes", err)
 		}
 		logger.Debug(fmt.Sprintf("Rules: %+v", rules))
 
