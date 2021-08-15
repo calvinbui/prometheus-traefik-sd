@@ -6,27 +6,47 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"reflect"
 	"strings"
 
 	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/prometheus"
 )
 
 func CreateJSON(tgs []PromTargetFile, folder string) error {
 	for _, tg := range tgs {
+		logger.Debug("Marshalling JSON to " + tg.FilePath)
+		config, err := json.MarshalIndent(tg.Data, "", "  ")
+		if err != nil {
+			logger.Fatal("Error creating JSON data for Prometheus", err)
+		}
+
+		logger.Debug("Checking if " + tg.FilePath + " exists")
 		if _, err := os.Stat(tg.FilePath); os.IsNotExist(err) {
-			logger.Debug("Marshalling JSON to " + tg.FilePath)
-			if config, err := json.MarshalIndent(tg.Data, "", "  "); err != nil {
-				logger.Fatal("Error creating JSON data for Prometheus", err)
-			} else {
-				logger.Debug(fmt.Sprintf("Write to JSON file %s: %s", tg.FilePath, config))
-				if err = ioutil.WriteFile(tg.FilePath, config, 0755); err != nil {
-					logger.Fatal("Error writing JSON to file "+tg.FilePath, err)
-				}
+			logger.Debug(tg.FilePath + " exists")
+			logger.Debug(fmt.Sprintf("Write JSON to file %s: %s", tg.FilePath, config))
+			if err = writeFile(tg.FilePath, config); err != nil {
+				return err
 			}
 		} else if err != nil {
 			return err
 		} else {
-			logger.Debug(fmt.Sprintf("The JSON file %s exists, no actions will be performed", tg.FilePath))
+			if currentData, err := ioutil.ReadFile(tg.FilePath); err != nil {
+				return err
+			} else {
+				var currentConfig prometheus.TargetGroups
+				if err := json.Unmarshal(currentData, &currentConfig); err != nil {
+					return err
+				} else {
+					if reflect.DeepEqual(currentConfig, config) {
+						logger.Debug(fmt.Sprintf("The JSON file %s exists, no actions will be performed", tg.FilePath))
+					} else {
+						if err = writeFile(tg.FilePath, config); err != nil {
+							return err
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -40,4 +60,8 @@ func CreateFileName(folder string, targets []string) string {
 	}
 
 	return path.Join(folder, strings.Join(noSchemeTargets, "_")+".json")
+}
+
+func writeFile(filePath string, data []byte) error {
+	return ioutil.WriteFile(filePath, data, 0755)
 }
