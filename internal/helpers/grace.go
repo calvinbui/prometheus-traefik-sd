@@ -1,10 +1,13 @@
 package helpers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
 )
 
 type GraceFile struct {
@@ -23,17 +26,20 @@ existingFiles:
 		if !targetExists(tgs, f) {
 			for _, g := range gFiles {
 				if g.FilePath == f {
+					logger.Debug(fmt.Sprintf("%s will be deleted once grace period is exceeded", f))
 					g.Count++
 					continue existingFiles
 				}
 			}
 
+			logger.Info(fmt.Sprintf("%s will be deleted once grace period has exceeded", f))
 			gFiles = append(gFiles, GraceFile{FilePath: f, Count: 1})
 		}
 	}
 
 	for _, g := range gFiles {
 		if g.Count >= gracePeriod {
+			logger.Info(fmt.Sprintf("Deleting %s as grace period has exceeded", g.FilePath))
 			if err = os.Remove(g.FilePath); err != nil {
 				return nil, err
 			}
