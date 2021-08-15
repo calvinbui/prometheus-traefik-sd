@@ -14,6 +14,8 @@ type Config struct {
 	RunInterval int `long:"interval" env:"INTERVAL" default:"600"`
 
 	OutputDir string `short:"o" env:"OUTPUT_DIR" default:"/prometheus-traefik-sd/"`
+
+	GracePeriod int `long:"grace-period" env:"GRACE_PERIOD" default:"6"`
 }
 
 func New() (Config, error) {

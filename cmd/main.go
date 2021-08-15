@@ -25,6 +25,8 @@ func main() {
 		logger.Fatal("Error setting log level", err)
 	}
 
+	var graceFiles []helpers.GraceFile
+
 	for {
 		logger.Info("Getting Traefik routing rules")
 		logger.Debug("Getting Traefik routes")
@@ -58,14 +60,15 @@ func main() {
 			})
 		}
 
-		logger.Debug("Creating config folder if it does not exist")
-		if err = helpers.InitFolder(conf.OutputDir); err != nil {
-			logger.Fatal("Error creating config folder", err)
-		}
-
 		logger.Info("Creating Prometheus JSON target file")
 		if err = helpers.CreateJSON(allTargets, conf.OutputDir); err != nil {
 			logger.Fatal("Error writing to JSON file", err)
+		}
+
+		logger.Info("Deleting old target files past grace period")
+		graceFiles, err = helpers.DeleteOldTargets(allTargets, conf.OutputDir, graceFiles, conf.GracePeriod)
+		if err != nil {
+			logger.Fatal("Error deleting old target files", err)
 		}
 
 		logger.Info(fmt.Sprintf("Sleeping %v seconds until next run", conf.RunInterval))

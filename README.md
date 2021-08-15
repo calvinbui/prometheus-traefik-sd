@@ -4,14 +4,15 @@ Generate targets for Prometheus using Traefik.
 
 ## Config
 
-| Environment Variable | Description                                        | Default                   |
-|----------------------|----------------------------------------------------|---------------------------|
-| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                        |
-| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                        |
-| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                        |
-| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                    |
-| `OUTPUT_DIR`         | The folder to output all target JSON files         | `/prometheus-traefik-sd/` |
-| `INTERVAL`           | How often to build the targets file                | `600`                     |
+| Environment Variable | Description                                                                                | Default                   |
+|----------------------|--------------------------------------------------------------------------------------------|---------------------------|
+| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://)                                         | ``                        |
+| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)                                              | ``                        |
+| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)                                              | ``                        |
+| `LOG_LEVEL`          | The level of log verbosity                                                                 | `Info`                    |
+| `OUTPUT_DIR`         | The folder to output all target JSON files                                                 | `/prometheus-traefik-sd/` |
+| `INTERVAL`           | How often to build the targets file                                                        | `600`                     |
+| `GRACE_PERIOD`       | How many `INTERVAL` cycles before deleting targets for Traefik routes that no longer exist | `6`                       |
 
 ## Usage
 
@@ -50,16 +51,11 @@ scrape_configs:
         replacement: blackbox_exporter:9115
 ```
 
-## Caveats
-
-If a route is removed from Traefik (i.e. a Docker container is removed), you will have to delete the target JSON file manually from Prometheus under the `OUTPUT_DIR`.
-
 ## To Do
 
 - Support config Labels for Prometheus
 - Integrate with Docker labels to configure labels and scheme (currently on https://)
 - Integrate with Traefik Services to get more information
-- Delete any unknown targets after a period of time
 
 ## Thanks
 
