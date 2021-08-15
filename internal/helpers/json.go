@@ -34,9 +34,10 @@ func CreateJSON(tgs []PromTargetFile, folder string) error {
 }
 
 func CreateFileName(folder string, targets []string) string {
+	var noSchemeTargets []string
 	for i := range targets {
-		targets[i] = strings.TrimPrefix(targets[i], SCHEME)
+		noSchemeTargets = append(noSchemeTargets, strings.TrimPrefix(targets[i], SCHEME))
 	}
 
-	return path.Join(folder, strings.Join(targets, "_")+".json")
+	return path.Join(folder, strings.Join(noSchemeTargets, "_")+".json")
 }
