@@ -1,0 +1,222 @@
+---
+
+project_name: prometheus-traefik-sd
+
+release:
+  github:
+    owner: calvinbui
+    name: prometheus-traefik-sd
+
+builds:
+  - id: aix
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - aix
+    goarch:
+      - ppc64
+
+  - id: darwin
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+  - id: dragonfly_illumos
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - dragonfly
+      - illumos
+    goarch:
+      - amd64
+
+  - id: freebsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 6
+      - 7
+
+  - id: linux
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - "386"
+      - "amd64"
+      - "arm64"
+      - "arm"
+      - "mips"
+      - "mips64"
+      - "mips64le"
+      - "mipsle"
+      - "ppc64"
+      - "ppc64le"
+      - "s390x"
+    goarm:
+      - 5
+      - 6
+      - 7
+
+  - id: netbsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - netbsd
+    goarch:
+      - "386"
+      - "amd64"
+      - "arm64"
+      - "arm"
+    goarm:
+      - 6
+      - 7
+
+  - id: openbsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - openbsd
+    goarch:
+      - "386"
+      - "amd64"
+      - "arm64"
+      - "arm"
+    goarm:
+      - 7
+
+  - id: windows
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    goarch:
+      - "386"
+      - "amd64"
+
+dockers:
+  - goos: linux
+    goarch: amd64
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-amd64"
+
+  - goos: linux
+    goarch: arm64
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm64v8"
+
+  - goos: linux
+    goarch: arm
+    goarm: 7
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/arm"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm32v7"
+
+  - goos: linux
+    goarch: ppc64le
+    use: buildx
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--platform=linux/ppc64le"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-ppc64le"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-ppc64le"
+
+docker_manifests:
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:{{ .Tag }}-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:latest"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:latest-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}-ppc64le"
+
+  - name_template: "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-arm32v7"
+      - "ghcr.io/calvinbui/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}-ppc64le"
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
