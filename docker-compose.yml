@@ -12,8 +12,9 @@ services:
       TRAEFIK_USERNAME: calvin
       TRAEFIK_PASSWORD: ${TRAEFIK_PASSWORD}
       LOG_LEVEL: debug
-      INTERVAL: 30
+      INTERVAL: 10
       OUTPUT_DIR: /prometheus-traefik-sd/
+      GRACE_PERIOD: 3
     volumes:
       - type: bind
         source: /apps/prometheus/prometheus-traefik-sd
