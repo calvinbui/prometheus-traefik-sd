@@ -44,11 +44,16 @@ func main() {
 		logger.Debug(fmt.Sprintf("All hosts: %+v", hosts))
 
 		logger.Info("Generating Prometheus data")
-		allTargets := []prometheus.TargetGroups{}
+		allTargets := []helpers.PromTargetFile{}
 		for _, t := range hosts {
-			allTargets = append(allTargets, prometheus.TargetGroups{
-				prometheus.TargetGroup{
-					Targets: t,
+			allTargets = append(allTargets, helpers.PromTargetFile{
+				FilePath: helpers.CreateFileName(conf.OutputDir, t),
+				Data: []prometheus.TargetGroups{
+					{
+						prometheus.TargetGroup{
+							Targets: t,
+						},
+					},
 				},
 			})
 		}

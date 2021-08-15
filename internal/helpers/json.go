@@ -7,19 +7,17 @@ import (
 	"strings"
 
 	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
-	"github.com/calvinbui/prometheus-traefik-sd/internal/prometheus"
 )
 
-func CreateJSON(tgs []prometheus.TargetGroups, folder string) error {
+func CreateJSON(tgs []PromTargetFile, folder string) error {
 	for _, tg := range tgs {
 		logger.Debug("Marshalling JSON")
-		if config, err := json.MarshalIndent(tg, "", "  "); err != nil {
+		if config, err := json.MarshalIndent(tg.Data, "", "  "); err != nil {
 			logger.Fatal("Error creating JSON data for Prometheus", err)
 		} else {
-			filePath := createFileName(folder, tg[0].Targets)
-			logger.Debug("Write JSON to file " + filePath)
-			if err = ioutil.WriteFile(filePath, config, 0755); err != nil {
-				logger.Fatal("Error writing JSON to file "+filePath, err)
+			logger.Debug("Write JSON to file " + tg.FilePath)
+			if err = ioutil.WriteFile(tg.FilePath, config, 0755); err != nil {
+				logger.Fatal("Error writing JSON to file "+tg.FilePath, err)
 			}
 		}
 	}
@@ -27,7 +25,7 @@ func CreateJSON(tgs []prometheus.TargetGroups, folder string) error {
 	return nil
 }
 
-func createFileName(folder string, targets []string) string {
+func CreateFileName(folder string, targets []string) string {
 	for i := range targets {
 		targets[i] = strings.TrimPrefix(targets[i], SCHEME)
 	}
