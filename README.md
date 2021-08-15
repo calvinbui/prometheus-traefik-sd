@@ -1,17 +1,17 @@
-# Blackbox Traefik SD
+# Prometheus Traefik Service Discovery
 
-Generate targets for Blackbox Exporter using Traefik.
+Generate targets for Prometheus using Traefik.
 
 ## Config
 
-| Environment Variable | Description                                        | Default                 |
-|----------------------|----------------------------------------------------|-------------------------|
-| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                      |
-| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                      |
-| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                      |
-| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                  |
-| `OUTPUT_DIR`         | The folder to output all target JSON files         | `/blackbox-traefik-sd/` |
-| `INTERVAL`           | How often to build the targets file                | `600`                   |
+| Environment Variable | Description                                        | Default                   |
+|----------------------|----------------------------------------------------|---------------------------|
+| `TRAEFIK_URL`        | Traefik API url (with scheme, http:// or https://) | ``                        |
+| `TRAEFIK_USERNAME`   | Traefik API basic auth username (if required)      | ``                        |
+| `TRAEFIK_PASSWORD`   | Traefik API basic auth password (if required)      | ``                        |
+| `LOG_LEVEL`          | The level of log verbosity                         | `Info`                    |
+| `OUTPUT_DIR`         | The folder to output all target JSON files         | `/prometheus-traefik-sd/` |
+| `INTERVAL`           | How often to build the targets file                | `600`                     |
 
 ## Usage
 
@@ -23,14 +23,14 @@ Start this application, passing in the required environment variables. To start 
 $ docker run -d \
   -e TRAEFIK_URL=https://traefik.example.com \
   -e INTERVAL=600 \
-  -v /apps/blackbox-traefik-sd:/config \
+  -v /apps/prometheus-traefik-sd:/config \
   -e OUTPUT_DIR=/config/targets.json \
   ghcr.io/calvinbui/homer-service-discovery
 ```
 
 The application will generate JSON files to the path specified in the environment variable `OUTPUT_DIR`.
 
-Update your Prometheus config to use the generated targets file along with Blackbox Exporter:
+Update your Prometheus config to use the generated targets file. In this example, I've incorporated it with Blackbox Exporter
 
 ```yaml
 scrape_configs:
@@ -40,7 +40,7 @@ scrape_configs:
       module: [http]
     file_sd_configs:
       - files:
-        - /blackbox-traefik-sd/*.json
+        - /prometheus-traefik-sd/*.json
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

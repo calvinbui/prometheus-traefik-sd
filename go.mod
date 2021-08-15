@@ -1,4 +1,4 @@
-module github.com/calvinbui/blackbox-traefik-sd
+module github.com/calvinbui/prometheus-traefik-sd
 
 go 1.16
 

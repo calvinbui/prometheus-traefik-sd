@@ -13,10 +13,9 @@ type Config struct {
 
 	LogLevel string `env:"LOG_LEVEL" envDefault:"Info"`
 
-	// set twice as long as any blackbox alerts
 	RunInterval int `env:"INTERVAL" envDefault:"600"`
 
-	OutputDir string `env:"OUTPUT_DIR" envDefault:"/blackbox-traefik-sd/"`
+	OutputDir string `env:"OUTPUT_DIR" envDefault:"/prometheus-traefik-sd/"`
 }
 
 func New() (Config, error) {

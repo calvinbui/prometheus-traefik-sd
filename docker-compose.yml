@@ -13,11 +13,11 @@ services:
       TRAEFIK_PASSWORD: ${TRAEFIK_PASSWORD}
       LOG_LEVEL: debug
       INTERVAL: 30
-      OUTPUT_DIR: /blackbox-traefik-sd/
+      OUTPUT_DIR: /prometheus-traefik-sd/
     volumes:
       - type: bind
-        source: /apps/prometheus/blackbox-traefik-sd
-        target: /blackbox-traefik-sd
+        source: /apps/prometheus/prometheus-traefik-sd
+        target: /prometheus-traefik-sd
     networks:
       - mgmt
 

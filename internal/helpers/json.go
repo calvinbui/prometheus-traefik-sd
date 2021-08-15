@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
-	"github.com/calvinbui/blackbox-traefik-sd/internal/prometheus"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/prometheus"
 )
 
 func CreateJSON(tgs []prometheus.TargetGroups, folder string) error {

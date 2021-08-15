@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"sort"
 
-	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
 )
 
 const SCHEME = "https://"

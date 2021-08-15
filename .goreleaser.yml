@@ -1,11 +1,11 @@
 ---
 
-project_name: blackbox-traefik-sd
+project_name: prometheus-traefik-sd
 
 release:
   github:
     owner: calvinbui
-    name: blackbox-traefik-sd
+    name: prometheus-traefik-sd
 
 builds:
   - main: ./cmd/main.go

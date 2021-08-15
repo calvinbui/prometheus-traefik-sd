@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/calvinbui/blackbox-traefik-sd/internal/config"
-	"github.com/calvinbui/blackbox-traefik-sd/internal/helpers"
-	"github.com/calvinbui/blackbox-traefik-sd/internal/logger"
-	"github.com/calvinbui/blackbox-traefik-sd/internal/prometheus"
-	"github.com/calvinbui/blackbox-traefik-sd/internal/traefik"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/config"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/helpers"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/logger"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/prometheus"
+	"github.com/calvinbui/prometheus-traefik-sd/internal/traefik"
 )
 
 func main() {
