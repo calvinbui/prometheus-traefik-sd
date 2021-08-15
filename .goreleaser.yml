@@ -8,19 +8,118 @@ release:
     name: prometheus-traefik-sd
 
 builds:
-  - main: ./cmd/main.go
+  # - id: aix
+  #   main: ./cmd/main.go
+  #   binary: main
+  #   env:
+  #     - CGO_ENABLED=0
+  #   goos:
+  #     - aix
+  #   goarch:
+  #     - ppc64
+
+  - id: darwin
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+  - id: dragonfly_illumos
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - dragonfly
+      - illumos
+    goarch:
+      - amd64
+
+  - id: freebsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 6
+      - 7
+
+  - id: linux
+    main: ./cmd/main.go
     binary: main
     env:
       - CGO_ENABLED=0
     goos:
       - linux
     goarch:
+      - "386"
       - "amd64"
       - "arm64"
       - "arm"
+      - "mips"
+      - "mips64"
+      - "mips64le"
+      - "mipsle"
       - "ppc64"
+      - "ppc64le"
+      - "s390x"
+    goarm:
+      - 5
+      - 6
+      - 7
+
+  - id: netbsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - netbsd
+    goarch:
+      - "386"
+      - "amd64"
+      - "arm64"
+      - "arm"
+    goarm:
+      - 6
+      - 7
+
+  - id: openbsd
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - openbsd
+    goarch:
+      - "386"
+      - "amd64"
+      - "arm64"
+      - "arm"
     goarm:
       - 7
+
+  - id: windows
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    goarch:
+      - "386"
+      - "amd64"
 
 dockers:
   - goos: linux
