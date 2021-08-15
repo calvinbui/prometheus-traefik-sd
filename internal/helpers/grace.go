@@ -26,8 +26,8 @@ existingFiles:
 		if !targetExists(tgs, f) {
 			for _, g := range gFiles {
 				if g.FilePath == f {
-					logger.Debug(fmt.Sprintf("%s will be deleted once grace period is exceeded", f))
-					g.Count++
+					g.Count = g.Count + 1
+					logger.Debug(fmt.Sprintf("%s grace period count is now %v", g.FilePath, g.Count))
 					continue existingFiles
 				}
 			}
@@ -37,9 +37,10 @@ existingFiles:
 		}
 	}
 
+	logger.Debug(fmt.Sprintf("Grace period count is set to %v", gracePeriod))
 	for _, g := range gFiles {
 		if g.Count >= gracePeriod {
-			logger.Info(fmt.Sprintf("Deleting %s as grace period has exceeded", g.FilePath))
+			logger.Info(fmt.Sprintf("Deleting %s as grace period has exceeded (%v)", g.FilePath, g.Count))
 			if err = os.Remove(g.FilePath); err != nil {
 				return nil, err
 			}
