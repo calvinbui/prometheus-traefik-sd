@@ -8,15 +8,15 @@ release:
     name: prometheus-traefik-sd
 
 builds:
-  # - id: aix
-  #   main: ./cmd/main.go
-  #   binary: main
-  #   env:
-  #     - CGO_ENABLED=0
-  #   goos:
-  #     - aix
-  #   goarch:
-  #     - ppc64
+  - id: aix
+    main: ./cmd/main.go
+    binary: main
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - aix
+    goarch:
+      - ppc64
 
   - id: darwin
     main: ./cmd/main.go

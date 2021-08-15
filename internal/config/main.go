@@ -1,28 +1,27 @@
 package config
 
 import (
-	"fmt"
-
-	"github.com/caarlos0/env/v6"
+	"github.com/jessevdk/go-flags"
 )
 
 type Config struct {
-	TraefikUrl      string `env:"TRAEFIK_URL"`
-	TraefikUsername string `env:"TRAEFIK_USERNAME"`
-	TraefikPassword string `env:"TRAEFIK_PASSWORD"`
+	TraefikUrl      string `long:"traefik-url" env:"TRAEFIK_URL"`
+	TraefikUsername string `long:"traefik-username" env:"TRAEFIK_USERNAME"`
+	TraefikPassword string `long:"traefik-password" env:"TRAEFIK_PASSWORD"`
 
-	LogLevel string `env:"LOG_LEVEL" envDefault:"Info"`
+	LogLevel string `long:"log-level" env:"LOG_LEVEL" default:"Info"`
 
-	RunInterval int `env:"INTERVAL" envDefault:"600"`
+	RunInterval int `long:"interval" env:"INTERVAL" default:"600"`
 
-	OutputDir string `env:"OUTPUT_DIR" envDefault:"/prometheus-traefik-sd/"`
+	OutputDir string `short:"o" env:"OUTPUT_DIR" default:"/prometheus-traefik-sd/"`
 }
 
 func New() (Config, error) {
 	conf := Config{}
+	parser := flags.NewParser(&conf, flags.Default)
 
-	if err := env.Parse(&conf); err != nil {
-		return Config{}, fmt.Errorf("Error parsing config from env: %+v\n", err)
+	if _, err := parser.Parse(); err != nil {
+		return Config{}, err
 	}
 
 	return conf, nil
