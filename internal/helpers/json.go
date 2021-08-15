@@ -15,7 +15,7 @@ import (
 
 func CreateJSON(tgs []PromTargetFile, folder string) error {
 	for _, tg := range tgs {
-		logger.Debug("Marshalling JSON to " + tg.FilePath)
+		logger.Trace(fmt.Sprintf("Marshalling JSON for %+v", tg.Data))
 		config, err := json.MarshalIndent(tg.Data, "", "  ")
 		if err != nil {
 			logger.Fatal("Error creating JSON data for Prometheus", err)
@@ -41,6 +41,7 @@ func CreateJSON(tgs []PromTargetFile, folder string) error {
 					if reflect.DeepEqual(currentConfig, config) {
 						logger.Debug(fmt.Sprintf("The JSON file %s exists, no actions will be performed", tg.FilePath))
 					} else {
+						logger.Debug(tg.FilePath + " is outdated. Updating.")
 						if err = writeFile(tg.FilePath, config); err != nil {
 							return err
 						}
