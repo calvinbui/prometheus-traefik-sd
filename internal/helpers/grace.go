@@ -27,7 +27,7 @@ existingFiles:
 			for i, g := range gFiles {
 				if g.FilePath == f {
 					gFiles[i].Count++
-					logger.Debug(fmt.Sprintf("%s grace period count is now %v", g.FilePath, g.Count))
+					logger.Debug(fmt.Sprintf("%s grace period count is now %v", g.FilePath, gFiles[i].Count))
 					continue existingFiles
 				}
 			}
