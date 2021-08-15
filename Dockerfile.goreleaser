@@ -1,3 +1,6 @@
+FROM golang:1.16.7-alpine3.14 as builder
+
 FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 ENTRYPOINT ["/main"]
 COPY main /

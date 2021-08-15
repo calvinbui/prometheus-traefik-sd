@@ -48,6 +48,7 @@ func main() {
 		logger.Info("Generating Prometheus data")
 		allTargets := []helpers.PromTargetFile{}
 		for _, t := range hosts {
+			logger.Info(fmt.Sprintf("Adding targets %+v", t))
 			allTargets = append(allTargets, helpers.PromTargetFile{
 				FilePath: helpers.CreateFileName(conf.OutputDir, t),
 				Data: prometheus.TargetGroups{
@@ -57,6 +58,7 @@ func main() {
 				},
 			})
 		}
+		logger.Debug(fmt.Sprintf("Prometheus data: %+v", allTargets))
 
 		logger.Info("Creating Prometheus JSON target file")
 		if err = helpers.CreateJSON(allTargets, conf.OutputDir); err != nil {
