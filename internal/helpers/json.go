@@ -2,7 +2,9 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 
@@ -11,14 +13,21 @@ import (
 
 func CreateJSON(tgs []PromTargetFile, folder string) error {
 	for _, tg := range tgs {
-		logger.Debug("Marshalling JSON")
-		if config, err := json.MarshalIndent(tg.Data, "", "  "); err != nil {
-			logger.Fatal("Error creating JSON data for Prometheus", err)
-		} else {
-			logger.Debug("Write JSON to file " + tg.FilePath)
-			if err = ioutil.WriteFile(tg.FilePath, config, 0755); err != nil {
-				logger.Fatal("Error writing JSON to file "+tg.FilePath, err)
+		if _, err := os.Stat(tg.FilePath); os.IsNotExist(err) {
+			logger.Trace("Marshalling JSON")
+			if config, err := json.MarshalIndent(tg.Data, "", "  "); err != nil {
+				logger.Fatal("Error creating JSON data for Prometheus", err)
+			} else {
+
+				logger.Debug("Write JSON to file " + tg.FilePath)
+				if err = ioutil.WriteFile(tg.FilePath, config, 0755); err != nil {
+					logger.Fatal("Error writing JSON to file "+tg.FilePath, err)
+				}
 			}
+		} else if err != nil {
+			return err
+		} else {
+			logger.Debug(fmt.Sprintf("The JSON file %s exists, no actions will be performed", tg.FilePath))
 		}
 	}
 
