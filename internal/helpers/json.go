@@ -14,12 +14,11 @@ import (
 func CreateJSON(tgs []PromTargetFile, folder string) error {
 	for _, tg := range tgs {
 		if _, err := os.Stat(tg.FilePath); os.IsNotExist(err) {
-			logger.Trace("Marshalling JSON")
+			logger.Debug("Marshalling JSON to " + tg.FilePath)
 			if config, err := json.MarshalIndent(tg.Data, "", "  "); err != nil {
 				logger.Fatal("Error creating JSON data for Prometheus", err)
 			} else {
-
-				logger.Debug("Write JSON to file " + tg.FilePath)
+				logger.Debug(fmt.Sprintf("Write to JSON file %s: %s", tg.FilePath, config))
 				if err = ioutil.WriteFile(tg.FilePath, config, 0755); err != nil {
 					logger.Fatal("Error writing JSON to file "+tg.FilePath, err)
 				}
