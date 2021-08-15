@@ -7,4 +7,6 @@ RUN \
 
 FROM scratch
 COPY --from=builder /build/main /main
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 ENTRYPOINT ["/main"]
