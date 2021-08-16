@@ -37,7 +37,6 @@ existingFiles:
 		}
 	}
 
-	logger.Debug(fmt.Sprintf("Grace period count is set to %v", gracePeriod))
 	var newGFiles []GraceFile
 	for _, g := range gFiles {
 		if g.Count >= gracePeriod {
