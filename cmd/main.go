@@ -14,7 +14,7 @@ import (
 func main() {
 	logger.Init()
 
-	logger.Debug("Loading config")
+	logger.Info("Loading config")
 	conf, err := config.New()
 	if err != nil {
 		logger.Fatal("Error parsing config", err)
@@ -48,7 +48,7 @@ func main() {
 		logger.Info("Generating Prometheus data")
 		allTargets := []helpers.PromTargetFile{}
 		for _, t := range hosts {
-			logger.Info(fmt.Sprintf("Adding targets %+v", t))
+			logger.Debug(fmt.Sprintf("Adding targets %+v", t))
 			allTargets = append(allTargets, helpers.PromTargetFile{
 				FilePath: helpers.CreateFileName(conf.OutputDir, t),
 				Data: prometheus.TargetGroups{

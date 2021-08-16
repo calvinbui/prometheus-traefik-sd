@@ -23,14 +23,15 @@ func CreateJSON(tgs []PromTargetFile, folder string) error {
 
 		logger.Debug("Checking if " + tg.FilePath + " exists")
 		if _, err := os.Stat(tg.FilePath); os.IsNotExist(err) {
-			logger.Debug(tg.FilePath + " exists")
-			logger.Debug(fmt.Sprintf("Write JSON to file %s: %s", tg.FilePath, config))
+			logger.Debug(tg.FilePath + " does not exists")
+			logger.Info(fmt.Sprintf("Creating target file %s for %+v", tg.FilePath, tg.Data[0].Targets))
 			if err = writeFile(tg.FilePath, config); err != nil {
 				return err
 			}
 		} else if err != nil {
 			return err
 		} else {
+			logger.Debug(tg.FilePath + " exists")
 			if currentData, err := ioutil.ReadFile(tg.FilePath); err != nil {
 				return err
 			} else {
@@ -38,10 +39,10 @@ func CreateJSON(tgs []PromTargetFile, folder string) error {
 				if err := json.Unmarshal(currentData, &currentConfig); err != nil {
 					return err
 				} else {
-					if reflect.DeepEqual(currentConfig, config) {
+					if reflect.DeepEqual(currentConfig, tg.Data) {
 						logger.Debug(fmt.Sprintf("The JSON file %s exists, no actions will be performed", tg.FilePath))
 					} else {
-						logger.Debug(tg.FilePath + " is outdated. Updating.")
+						logger.Info(tg.FilePath + " is outdated. Updating.")
 						if err = writeFile(tg.FilePath, config); err != nil {
 							return err
 						}
